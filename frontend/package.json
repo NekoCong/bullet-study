@@ -1,0 +1,22 @@
+{
+  "name": "live-danmaku-frontend",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "直播弹幕演示的前端：Vue 3 + Vite + TypeScript，负责 canvas 弹幕渲染、指标面板与模拟控制（学习项目，所有版本精确锁定以便复现）。",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vueuse/core": "15.0.0",
+    "vue": "3.5.43"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "6.0.9",
+    "typescript": "5.9.3",
+    "vite": "8.3.1",
+    "vue-tsc": "3.3.11"
+  }
+}

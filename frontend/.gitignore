@@ -1,0 +1,3 @@
+# 依赖与构建产物不入库（仓库根 .gitignore 的 /dist/ 只匹配根目录，这里单独声明）
+node_modules/
+dist/

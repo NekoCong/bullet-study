@@ -1,0 +1,28 @@
+{
+  // TypeScript 严格配置：前端为学习项目，开启最严格的类型检查以便尽早暴露问题。
+  // vue-tsc 会使用本文件检查 .vue / .ts 文件，且 build 脚本在 vite build 之前先跑类型检查。
+  "compilerOptions": {
+    // 目标运行时：现代浏览器即可（演示页面只面向 Chrome/Edge/Firefox 近期版本）
+    "target": "ES2022",
+    "module": "ESNext",
+    // bundler 解析模式配合 Vite（支持 package.json exports、无需写扩展名）
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    // 严格模式全家桶：禁止隐式 any、严格空值检查等
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    // 交由 Vite/esbuild 输出，tsc 只做类型检查不产物
+    "noEmit": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    // 引入 Vite 客户端类型（import.meta.env 等）
+    "types": ["vite/client"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "vite.config.ts"]
+}
