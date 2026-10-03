@@ -1,0 +1,39 @@
+# 应用配置：live-danmaku-mvp
+# 说明：本文件只放运行期参数。所有可调值都通过 ${ENV:默认值} 暴露，
+#       这样本地、CI、容器都能用环境变量覆盖，而无需改动代码。
+
+server:
+  # HTTP/WebSocket 监听端口。前端 Vite 代理和后端自连接模拟器都指向 8080。
+  port: 8080
+
+  tomcat:
+    # 最大连接数：模拟器会在本进程内回连自己，客户端+服务端合计约 2 倍于目标连接数，
+    # 1000 目标连接时进程内可能同时持有约 2000 个 socket，默认 8192 太小，必须抬高。
+    max-connections: ${SERVER_TOMCAT_MAX_CONNECTIONS:8192}
+    threads:
+      # 工作线程上限：模拟器用共享调度线程池发送，不占用 Tomcat 线程，
+      # 但仍需保证 WebSocket 握手与消息处理有足够线程；默认 200 在高并发握手时会排队。
+      max: ${SERVER_TOMCAT_THREADS_MAX:400}
+    # 等待接受队列长度：当所有工作线程都在处理握手时，新连接进入该队列，
+    # 抬高可避免瞬时并发握手直接拒绝连接（Connection refused）。
+    accept-count: ${SERVER_TOMCAT_ACCEPT_COUNT:200}
+
+spring:
+  data:
+    redis:
+      # Redis 地址：pub/sub 广播的信道（本地验证由 docker run 提供）。
+      host: ${REDIS_HOST:localhost}
+      # Redis 端口：与 docker run -p 6379:6379 对应。
+      port: ${REDIS_PORT:6379}
+
+danmaku:
+  # 合批刷新间隔（毫秒）：每 50ms 把各会话队列里的弹幕合并成一帧下发。
+  # 批量发送可避免“一条消息一帧”把带宽放大；代价是最多 50ms 的额外延迟。
+  flush-interval-ms: 50
+  # 单会话合批队列上限：超过上限时丢弃最旧消息（drop-oldest），保证慢客户端不会拖垮服务端内存。
+  max-buffer-per-session: 200
+  # 单会话发送时间上限（毫秒）：由 ConcurrentWebSocketSessionDecorator 施加，
+  # 超过该时长仍未发完则关闭该会话，防止一个慢客户端阻塞广播线程。
+  send-time-limit-ms: 5000
+  # 单会话发送缓冲区上限（字节，1MB）：装饰器据此判断会话是否积压过多而需要关闭。
+  buffer-size-limit-bytes: 1048576
